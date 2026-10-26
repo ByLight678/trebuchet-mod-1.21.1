@@ -4,7 +4,7 @@ Minecraft **1.21.1**, NeoForge **21.1.264**, Java **21**.
 Based on the official NeoForge ModDevGradle MDK, using ModDevGradle 2.0.148 and Gradle 9.2.1.
 
 Mod ID: `trebuchet`
-Java package: `com.josep.trebuchet`
+
 Version: `0.1.0`
 
 
