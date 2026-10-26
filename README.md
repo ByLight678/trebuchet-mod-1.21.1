@@ -7,6 +7,8 @@ Mod ID: `trebuchet`
 
 Version: `0.1.0`
 
+DISCLAIMER: The ideas of this mod are my own, but implementation and models for this project contain AI generated content.
+
 
 ## Timber Trebuchet block
 
