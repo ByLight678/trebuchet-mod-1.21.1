@@ -7,53 +7,6 @@ Mod ID: `trebuchet`
 Java package: `com.josep.trebuchet`
 Version: `0.1.0`
 
-## Development on this computer
-
-A portable Temurin Java 21 JDK is installed under `.tools/`.
-The PowerShell helper selects it and keeps Gradle downloads in `.gradle-user-home/`.
-These folders are ignored by Git. No system-wide Java installation is required.
-
-Run from this folder:
-
-```powershell
-.\dev.ps1 build
-.\dev.ps1 runClient
-.\dev.ps1 runServer
-.\dev.ps1 runData
-```
-
-If PowerShell blocks local scripts, use this process-only invocation:
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\dev.ps1 build
-```
-
-The built mod is `build/libs/trebuchet-0.1.0.jar`.
-The development server requires accepting Minecraft's EULA in its generated `eula.txt` before use.
-Run the placement, collision, and drop integration tests with `.\dev.ps1 runGameTestServer`.
-
-## IDE setup
-
-Open this directory as a Gradle project in IntelliJ IDEA or Eclipse.
-Select the JDK directory under `.tools/` as both the project SDK and Gradle JVM.
-Use the included Gradle wrapper. To reuse the command-line dependency cache,
-set the IDE's Gradle user home to this project's `.gradle-user-home` directory.
-Reload Gradle and use the generated client/server run configurations or Gradle tasks.
-
-On another machine, install a 64-bit Java 21 JDK and set `JAVA_HOME`, then
-use `./gradlew build` (Linux/macOS) or `.\gradlew.bat build` (Windows).
-The GitHub Actions workflow also builds with Java 21.
-
-## Project layout
-
-- `src/main/java/com/josep/trebuchet/TrebuchetMod.java`: block, item, block entity, and network registration.
-- `src/main/templates/META-INF/neoforge.mods.toml`: mod metadata, expanded during the build.
-- `src/main/resources/`: runtime assets and data.
-- `src/generated/resources/`: generated data output.
-- `art/trebuchet/`: copies of the original Blockbench model, texture, and rig notes.
-
-The source artwork was copied from the original `codex_blockbench/trebuchet` project.
-Original files are unchanged. Artwork is kept outside runtime resources and is not packaged in the mod JAR.
 
 ## Timber Trebuchet block
 
