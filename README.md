@@ -141,4 +141,4 @@ and the launch pad's position, direction, speeds, entity selection, and network 
 - https://github.com/NeoForgeMDKs/MDK-1.21.1-ModDevGradle
 
 The upstream template license is retained in `TEMPLATE_LICENSE.txt`.
-The project's mod metadata currently uses All Rights Reserved.
+The project is licensed under the MIT License; see `LICENSE`.
