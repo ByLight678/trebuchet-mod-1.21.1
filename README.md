@@ -4,60 +4,29 @@ Minecraft **1.21.1**, NeoForge **21.1.264**, Java **21**.
 Based on the official NeoForge ModDevGradle MDK, using ModDevGradle 2.0.148 and Gradle 9.2.1.
 
 Mod ID: `trebuchet`
-Java package: `com.josep.trebuchet`
 Version: `0.1.0`
 
-## Development on this computer
+DISCLAIMER: The ideas of this mod are my own, but implementation and models for this project contain AI generated content.
 
-A portable Temurin Java 21 JDK is installed under `.tools/`.
-The PowerShell helper selects it and keeps Gradle downloads in `.gradle-user-home/`.
-These folders are ignored by Git. No system-wide Java installation is required.
+## Launch configuration
 
-Run from this folder:
+The mod creates `config/trebuchet-common.toml` in the Minecraft instance or server
+directory on first launch. Stop the game/server, edit the values, then restart:
 
-```powershell
-.\dev.ps1 build
-.\dev.ps1 runClient
-.\dev.ps1 runServer
-.\dev.ps1 runData
+```toml
+[launch]
+verticalVelocity = 140.0
+horizontalVelocity = 260.0
 ```
 
-If PowerShell blocks local scripts, use this process-only invocation:
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\dev.ps1 build
-```
-
-The built mod is `build/libs/trebuchet-0.1.0.jar`.
-The development server requires accepting Minecraft's EULA in its generated `eula.txt` before use.
-Run the placement, collision, and drop integration tests with `.\dev.ps1 runGameTestServer`.
-
-## IDE setup
-
-Open this directory as a Gradle project in IntelliJ IDEA or Eclipse.
-Select the JDK directory under `.tools/` as both the project SDK and Gradle JVM.
-Use the included Gradle wrapper. To reuse the command-line dependency cache,
-set the IDE's Gradle user home to this project's `.gradle-user-home` directory.
-Reload Gradle and use the generated client/server run configurations or Gradle tasks.
-
-On another machine, install a 64-bit Java 21 JDK and set `JAVA_HOME`, then
-use `./gradlew build` (Linux/macOS) or `.\gradlew.bat build` (Windows).
-The GitHub Actions workflow also builds with Java 21.
-
-## Project layout
-
-- `src/main/java/com/josep/trebuchet/TrebuchetMod.java`: block, item, block entity, and network registration.
-- `src/main/templates/META-INF/neoforge.mods.toml`: mod metadata, expanded during the build.
-- `src/main/resources/`: runtime assets and data.
-- `src/generated/resources/`: generated data output.
-- `art/trebuchet/`: copies of the original Blockbench model, texture, and rig notes.
-
-The source artwork was copied from the original `codex_blockbench/trebuchet` project.
-Original files are unchanged. Artwork is kept outside runtime resources and is not packaged in the mod JAR.
+Values are initial speeds in metres per second; each accepts decimals from 0 to
+1000. On multiplayer, edit the server's file: client-side values do not override
+server launches. The flight-compensation timeout automatically uses the configured
+initial velocity. Existing trebuchets use the new values on their next launch.
 
 ## Timber Trebuchet block
 
-Find **Timber Trebuchet** under Creative's **Functional Blocks** tab, or run:
+Find **Timber Trebuchet** under Creative's **Trebuchet** tab, or run:
 
 ```mcfunction
 /give @s trebuchet:trebuchet
@@ -81,6 +50,7 @@ Logs use the `minecraft:logs` item tag, so wood types can be mixed, including
 stripped logs and Nether stems. The recipe book unlocks when you obtain a log.
 
 The collision and selection footprint is exactly **3 wide × 4 long × 1 high**.
+The base transmits light and does not cast a solid block-lighting shadow.
 The renderer uses the original model dimensions (16 model units per block),
 including the loaded pose's approximately 3.04-block height. Geometry above the
 base is intentionally non-colliding and cannot be targeted by itself. No empty
@@ -116,6 +86,20 @@ High-speed server-controlled entities receive full-speed tracking updates while
 their motion exceeds that limit; players receive the full initial impulse and
 then simulate normal movement locally.
 
+Launched players temporarily retain 98% of horizontal speed per airborne tick
+instead of vanilla's 91%. Vertical motion and gravity remain vanilla. Compensation
+cannot increase horizontal speed beyond its value before that tick. It ends on
+elytra gliding, Creative flight, landing, water/bubble columns, lava, mounting,
+collision, death, dimension changes, or teleport events. Large unannounced position
+jumps also end it. Ending compensation preserves current velocity and hands motion
+back to the normal movement rules.
+
+The timeout is proportional to the magnitude of the initial velocity:
+`ceil(initial speed in blocks/tick × 20)` ticks, capped at 1200 ticks (60 seconds).
+At 260 m/s horizontally and 140 m/s vertically this is 296 ticks (14.8 seconds).
+Only launched players receive drag compensation; TNT, items, and mobs keep their
+own normal physics. Both server and clients must use the updated mod.
+
 To regenerate the Java model after editing the source artwork:
 
 ```powershell
@@ -128,12 +112,15 @@ The exporter retains all 37 cubes, their sizes, pivots, group hierarchy,
 rest rotations, and box UV offsets. The source atlas is copied unchanged to
 `src/main/resources/assets/trebuchet/textures/block/trebuchet.png`.
 
-The five GameTests exercise placement in all four directions, collision and
+The seven GameTests exercise placement in all four directions, collision and
 empty space above every base cell, one-item consumption, breaking each of the
 twelve cells with exactly one drop per structure, and rejected obstructed or
 unsupported placement without partial structures or item consumption. They also
 cover right-click animation activation and replay, synchronized playback state,
 and the launch pad's position, direction, speeds, entity selection, and network payload.
+Flight-control checks cover proportional timeout and its cap, horizontal retention,
+vertical velocity preservation, speed limiting, expiration, and cancellation on
+gliding, landing, collisions, and teleports.
 
 ## Upstream references
 

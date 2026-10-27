@@ -14,8 +14,6 @@ import net.minecraft.world.phys.Vec3;
 
 public final class TrebuchetBlockEntity extends BlockEntity {
     public static final int LAUNCH_TICKS = 64;
-    public static final double VERTICAL_LAUNCH_SPEED = 140.0 / 20.0;
-    public static final double HORIZONTAL_LAUNCH_SPEED = 260.0 / 20.0;
     private long launchStart = -1;
 
     public TrebuchetBlockEntity(BlockPos pos, BlockState state) {
@@ -33,8 +31,7 @@ public final class TrebuchetBlockEntity extends BlockEntity {
 
     private void launchEntities() {
         Direction facing = getBlockState().getValue(TrebuchetBlock.FACING);
-        Vec3 velocity = new Vec3(-facing.getStepX() * HORIZONTAL_LAUNCH_SPEED, VERTICAL_LAUNCH_SPEED,
-                -facing.getStepZ() * HORIZONTAL_LAUNCH_SPEED);
+        Vec3 velocity = TrebuchetConfig.launchVelocity(facing);
         BlockPos launchPad = TrebuchetBlock.partPosition(worldPosition, facing, 10);
         double top = launchPad.getY() + 1.0;
         // Launch from the opposite end's middle cell (part 10), not the renderer anchor.

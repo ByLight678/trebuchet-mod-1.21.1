@@ -20,11 +20,14 @@ public final class LaunchMotionSync {
         entity.stopRiding();
         entity.setDeltaMovement(velocity);
         entity.setOnGround(false);
+        entity.horizontalCollision = false;
+        entity.verticalCollision = false;
         entity.fallDistance = 0;
         entity.hasImpulse = true;
         // A vanilla hurt-motion packet would overwrite the player's full-speed impulse with 3.9.
         entity.hurtMarked = false;
         PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new LaunchVelocityPayload(entity.getId(), velocity));
+        if (entity instanceof ServerPlayer player) TrebuchetFlightControl.launch(player, velocity);
         TRACKED.add(entity);
     }
 
